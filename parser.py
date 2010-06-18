@@ -131,8 +131,10 @@ def get_departures(station, dt):
 	return result
 
 def get_stops(train, dep_station, arr_station, dt):
-	if isinstance(station, str):
-		station = parse_i(get_id(station))["L"]
+	if isinstance(dep_station, str):
+		station = parse_i(get_id(dep_station))["L"]
+	if isinstance(arr_station, str):
+		station = parse_i(get_id(arr_station))["L"]
 	req = Request("http://mobile.bahn.de/bin/mobil/bhftafel.exe/dn?",
 			urlencode({
 				"start":"yes",
@@ -162,6 +164,8 @@ def get_stops(train, dep_station, arr_station, dt):
 				s[key] = value
 		result.append(s)
 	return result
+
+print get_stops('RE 36072', 8010334, 8010310, datetime(2010, 06, 18, 15, 43))
 
 #late:
 #http://mobile.bahn.de/bin/mobil/bhftafel.exe/dn?
@@ -481,8 +485,9 @@ a = PlnParse(f)
 #def bin(i):
 #	return "".join(str((i >> y) & 1) for y in range(16-1, -1, -1))
 #print a.timetable_info
+from pprint import pprint
 for conn in a.connections:
-	print conn
+	pprint(conn)
 #for conn in a.connections:
 #	print "\t".join([conn["freq"][0], bin(conn["freq"][1]), bin(conn["freq"][2]), bin(conn["freq"][3])])
 #for conn in a.connections:
