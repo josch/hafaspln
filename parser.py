@@ -2,10 +2,9 @@ from urllib2 import Request, urlopen
 from urllib import urlencode, quote_plus, urlretrieve
 from gzip import GzipFile
 from cStringIO import StringIO
-from zlib import decompress
 from struct import unpack
 from time import sleep
-from datetime import timedelta, date, datetime
+from datetime import timedelta, date, time, datetime
 from lxml import etree
 
 def get_id(station):
@@ -364,7 +363,7 @@ class PlnParse:
 			self.connections.append({
 				"freq":self.get_frequency(freq),
 				"number_of_changes":number_of_changes,
-				"duration":self.parse_time(duration),
+				"duration":self.parse_timedelta(duration),
 				"trains":trains})
 	
 	def parse_products(self, products):
@@ -378,15 +377,25 @@ class PlnParse:
 			p = ["ice", "ic", "ir", "re", "sbahn", "bus", "boat", "subway", "tram", "taxi"]
 			return dict(zip(p, map(bool, map(int, products[:10]))))
 	
-	def parse_time(self, time):
+	def parse_timedelta(self, t):
 		"""
 		time is stored as an integer which, when represented as a string can be
 		split to get a string representation of the time
 		1345 => 13:54
 		512 => 5:12
 		"""
-		time = "%03d"%time
-		return ":".join([time[:-2], time[-2:]])
+		t = "%03d"%t
+		return timedelta(hours=int(t[:-2]), minutes=int(t[-2:]))
+
+	def parse_time(self, t):
+		"""
+		time is stored as an integer which, when represented as a string can be
+		split to get a string representation of the time
+		1345 => 13:54
+		512 => 5:12
+		"""
+		t = "%03d"%t
+		return time(hour=int(t[:-2]), minute=int(t[-2:]))
 
 	def parse_date(self, d):
 		"""
@@ -463,10 +472,11 @@ class PlnParse:
 		name, L, X, Y = unpack("<H3I", self.f.read(14))
 		return {"name":self.get_string(name), "L":L, "X":X, "Y":Y}
 
-#f = open("pln", "r")
-a = PlnParse(get_pln_data(compile_i_from_station("Bremen"), compile_i_from_station("Karlsruhe"), dt = datetime.today()+timedelta(days=1)))
+#f = open("stendal-salzwedel-1st.bin", "r")
+f = GzipFile("stendal-salzwedel-1st.bin", "r")
+#a = PlnParse(get_pln_data(compile_i_from_station("Bremen"), compile_i_from_station("Karlsruhe"), dt = datetime.today()+timedelta(days=1)))
 #a = PlnParse(get_pln_data(compile_i_from_coords(8.6535, 53.1667), compile_i_from_station("Bremen"), dt = datetime.today()+timedelta(days=4)))
-#a = PlnParse(f)
+a = PlnParse(f)
 
 #def bin(i):
 #	return "".join(str((i >> y) & 1) for y in range(16-1, -1, -1))
