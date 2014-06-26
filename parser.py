@@ -7,6 +7,8 @@ from time import sleep
 from datetime import timedelta, date, time, datetime
 from lxml import etree
 
+DEBUG = 3
+
 def get_id(station):
 	return get_ids(station+"!")[0]
 
@@ -108,9 +110,9 @@ def get_departures(station, dt):
 				"date":dt.strftime("%d.%m.%Y"),
 				"time":dt.strftime("%H:%M"),
 				"boardType":"dep",
-				"sTI":"0",
-				"L":"vs_java3",
-				"input":dep_station,
+				"sTI":"0", # can be left out
+				"L":"vs_java3", # also vs_java
+				"input":station,
 				"productsFilter":"1"*14
 				}),
 			{"User-Agent":"Java/1.6.0_0"})
@@ -165,7 +167,7 @@ def get_stops(train, dep_station, arr_station, dt):
 		result.append(s)
 	return result
 
-print get_stops('RE 36072', 8010334, 8010310, datetime(2010, 06, 18, 15, 43))
+#print get_stops('RE 36072', 8010334, 8010310, datetime(2010, 06, 18, 15, 43))
 
 #late:
 #http://mobile.bahn.de/bin/mobil/bhftafel.exe/dn?
@@ -212,6 +214,10 @@ def get_pln_data(start, end, stop1=None, stop2=None, dt=None, bike=False,
 	s = StringIO(r.read()) # this is why a stringio has to be created for gzip
 	return GzipFile(mode="r", fileobj=s) # possibly replacable by manually reading the gzip header
 
+def debug(level, *args):
+	if DEBUG >= level:
+		print "\033[1m"+args[0]%args[1:]+"\033[0m"
+
 class PlnParse:
 	"""
 	all data in little endian
@@ -224,18 +230,17 @@ class PlnParse:
 		self.f = fh
 		self.strings = dict()
 		self.connections = list()
-	   
-		self.f.seek(0x00)
-		self.version, = unpack("<H", self.f.read(2))
+
 		"""
 		pos	 type	description
 		0x00	ushort  version
 		"""
+		self.f.seek(0x00)
+		debug(1, "%08x: read %d bytes for version", self.f.tell(), 2)
+		self.version, = unpack("<H", self.f.read(2))
 		if self.version != 5:
 			raise IOError, "unknown version: %d"%self.version
-		
-		self.f.seek(0x02)
-		start_station, u1, sX, sY = unpack("<H3I", self.f.read(14))
+
 		"""
 		pos	 type	description
 		0x02	ushort  string reference to start station name
@@ -243,9 +248,11 @@ class PlnParse:
 		0x08	uint	longitude of start station
 		0x0C	uint	latitude of start station
 		"""
-		
-		self.f.seek(0x10)
-		end_station, u1, eX, eY = unpack("<H3I", self.f.read(14))
+		self.f.seek(0x02)
+		debug(1, "%08x: read %d bytes for start station, unknown, longitude and latitude", self.f.tell(), 14)
+		start_station, u1, sX, sY = unpack("<H3I", self.f.read(14))
+		debug(2, "\tstart_station: %d, u1: %d, sX: %d, sY: %d", start_station, u1, sX, sY)
+
 		"""
 		pos	 type	description
 		0x10	ushort  string reference to end station name
@@ -253,23 +260,30 @@ class PlnParse:
 		0x16	uint	longitude of end station
 		0x1A	uint	latitude of end station
 		"""
-		
-		self.f.seek(0x1e)
-		number_of_conn, self.frequencies_offset, self.strings_offset = unpack("<HII", self.f.read(10))
+		self.f.seek(0x10)
+		debug(1, "%08x: read %d bytes for end station, unknown, longitude and latitude", self.f.tell(), 14)
+		end_station, u1, eX, eY = unpack("<H3I", self.f.read(14))
+		debug(2, "\tend_station: %d, u1: %d, eX: %d, eY: %d", end_station, u1, eX, eY)
+
 		"""
 		pos	 type	description
 		0x1e	ushort  number of connections found
 		0x20	uint	position of connection frequency data
 		0x24	uint	position of string block
 		"""
-		#print "number_of_conn: %d, frequencies_offset: %d, strings_offset: %d"%(number_of_conn, self.frequencies_offset, self.strings_offset)
+		self.f.seek(0x1e)
+		debug(1, "%08x: read %d bytes for number of connections, frequency offset and string offset", self.f.tell(), 10)
+		number_of_conn, self.frequencies_offset, self.strings_offset = unpack("<HII", self.f.read(10))
+		debug(2, "\tnumber_of_conn: %d, frequencies_offset: %d, strings_offset: %d", number_of_conn, self.frequencies_offset, self.strings_offset)
+		debug(3, "\t\thex(frequencies_offset) = %08x", self.frequencies_offset)
+		debug(3, "\t\thex(strings_offset) = %08x", self.strings_offset)
 		
 		#now that we read the string_offset, get the station names
 		self.start_station = {"name":self.get_string(start_station), "X":sX, "Y":sY}
 		self.end_station = {"name":self.get_string(end_station), "X":eX, "Y":eY}
+		debug(3, "\t\tget_string(start_station) = %s", self.get_string(start_station))
+		debug(3, "\t\tget_string(end_station) = %s", self.get_string(end_station))
 		
-		self.f.seek(0x28)
-		timetable_begin, timetable_end, today, timetable_remaining = unpack("<4H", self.f.read(8))
 		"""
 		pos	 type	description
 		0x28	ushort  begin date of current timetable version
@@ -277,48 +291,61 @@ class PlnParse:
 		0x2c	ushort  date of query
 		0x2e	ushort  remaining days in current timetable version
 		"""
+		self.f.seek(0x28)
+		debug(1, "%08x: read %d bytes for dates of beginning, ending and remaining days of the current timetable", self.f.tell(), 8)
+		timetable_begin, timetable_end, today, timetable_remaining = unpack("<4H", self.f.read(8))
 		self.timetable_info = {
 			"timetable_begin":self.parse_date(timetable_begin),
 			"timetable_end":self.parse_date(timetable_end),
 			"today":self.parse_date(today),
 			"timetable_remaining":timetable_remaining}
+		debug(2, "\ttimetable_begin: %d, timetable_end: %d, today: %d, timetable_remaining: %d", timetable_begin, timetable_end, today, timetable_remaining)
 		
 		self.f.seek(0x30)
-		#print "unknown string: %s"%self.f.read(6)
+		debug(1, "%08x: read %d bytes for unknown string", self.f.tell(), 6)
+		debug(2, "\tunknown string: %s", self.f.read(6))
 		
-		self.f.seek(0x36)
-		self.cities_offset, self.train_props_offset \
-			= unpack("<II", self.f.read(8))
 		"""
 		pos	 type	description
 		0x36	uint	position of city descriptions
 		0x3a	uint	position of train property data
 		"""
+		self.f.seek(0x36)
+		debug(1, "%08x: read %d bytes for city and train props offset", self.f.tell(), 8)
+		self.cities_offset, self.train_props_offset = unpack("<II", self.f.read(8))
+		debug(2, "\tcities_offset: %d, train_props_offset: %d", self.cities_offset, self.train_props_offset)
 		
 		#TODO: <begin big (46 bytes) ugly unknown section>
-		# a lot of unknown stuff which consists either of never changing data
+		# a lot of mostly unknown stuff which consists either of never changing data
 		# or of zero-ed data
-		# but seems to be not important for the rest as its size is static and
+		# but seems not to be important as its size is static and
 		# no static information seems to be missing
 		# probably 46 bytes of obsolete data?
+		# u5_offset and u8_offset are only non-zero for partial pln data
 		self.f.seek(0x3e)
-		#print "cities_offset: %d, train_props_offset: %d"%(self.cities_offset, self.train_props_offset)
-		additional_offset1, u2, additional_offset2 \
-			= unpack("<3I", self.f.read(12))
-		#print "additional_offset1: %d, u2: %d, additional_offset2: %d"%(additional_offset1, u2, additional_offset2)
+		debug(1, "%08x: read %d bytes for lots of mostly useless stuff", self.f.tell(), 12)
+		additional_offset1, u1, additional_offset2 = unpack("<3I", self.f.read(12))
+		debug(2, "\tadditional_offset1: %d, u1: %d, additional_offset2: %d", additional_offset1, u1, additional_offset2)
+		debug(3, "\t\thex(additional_offset1) = %08x", additional_offset1)
+		debug(3, "\t\thex(additional_offset2) = %08x", additional_offset2)
 		
 		self.f.seek(additional_offset1)
+		debug(1, "%08x: read %d bytes for some unknown", self.f.tell(), 2)
 		u1, = unpack("<H", self.f.read(2))
-		#print "u1: %d"%u1
+		debug(2, "\tu1: %d", u1)
 
 		self.f.seek(additional_offset2)
-		u1, u2, u3, request_id, u5_offset, u6, u7, u8_offset, u9, u10, u11, u12 \
-			= unpack("<IIHHIHHI4H", self.f.read(32))
-		#print "u1: %d, u2: %d, u3: %d, request_id: %s, u5_offset: %d, u6: %d, u7: %s, u8_offset: %d, u9: %d, u10: %d, u11: %d, u12: %d"%(u1, u2, u3, self.get_string(request_id), u5_offset, u6, self.get_string(u7), u8_offset, u9, u10, u11, u12)
+		debug(1, "%08x: read %d bytes for a huge bunch of unknowns", self.f.tell(), 32)
+		u1, u2, request_number, request_id, u5_offset, u6, products, u8_offset, u9, u10, u11, u12 = unpack("<IIHHIHHI4H", self.f.read(32))
+		debug(2, "\tu1: %d, u2: %d, request_number: %d, request_id: %d, u5_offset: %d, u6: %d, products: %d, u8_offset: %d, u9: %d, u10: %d, u11: %d, u12: %d", u1, u2, request_number, request_id, u5_offset, u6, products, u8_offset, u9, u10, u11, u12)
+		debug(3, "\t\tget_string(request_id) = %s", self.get_string(request_id))
+		debug(3, "\t\tget_string(products) = %s", self.get_string(products))
+		debug(3, "\t\thex(u5_offset) = %08x", u5_offset)
+		debug(3, "\t\thex(u8_offset) = %08x", u8_offset)
 		
 		# the only useful stuff:
 		self.reqest_id = self.get_string(request_id)
-		self.products = self.parse_products(self.get_string(u7))
+		self.products = self.parse_products(self.get_string(products))
 		#TODO: </end big ugly unknown section>
 		
 		for i in xrange(number_of_conn):
@@ -399,7 +426,10 @@ class PlnParse:
 		512 => 5:12
 		"""
 		t = "%03d"%t
-		return time(hour=int(t[:-2]), minute=int(t[-2:]))
+		hour, minute = int(t[:-2]), int(t[-2:])
+		# TODO: what to do with hour>=24 ?
+		hour %= 24
+		return time(hour, minute)
 
 	def parse_date(self, d):
 		"""
@@ -485,9 +515,8 @@ a = PlnParse(f)
 #def bin(i):
 #	return "".join(str((i >> y) & 1) for y in range(16-1, -1, -1))
 #print a.timetable_info
-from pprint import pprint
 for conn in a.connections:
-	pprint(conn)
+	print conn
 #for conn in a.connections:
 #	print "\t".join([conn["freq"][0], bin(conn["freq"][1]), bin(conn["freq"][2]), bin(conn["freq"][3])])
 #for conn in a.connections:

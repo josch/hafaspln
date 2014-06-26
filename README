@@ -1,0 +1,631 @@
+updates.hafas.de/updmgr/db/upd_hafas11.xml
+
+for f in all11w24 eu11w24 db11w24 prs11w24; do wget http://updates.hafas.de/download/db/$f.zip; done
+
+DB14/planatr
+============
+
+0000000: 8000 0400 0100 0e72 a54d 0500 0300 0200  .......r.M......
+0000010: 0200 b812 0000 7e96 0000 9c33 0000 4204  ......~....3..B.
+0000020: f40d 3bc8 0000 671f 0000 282c 932d 4a46  ..;...g...(,.-JF
+0000030: 3034 3120 7072 6f64 5f6d 6169 6e5f 6578  041 prod_main_ex
+0000040: 706f 7274 5f70 726f 645f 4a31 315f 3034  port_prod_J11_04
+0000050: 315f 3030 305f 706c 616e 5f63 6444 425f  1_000_plan_cdDB_
+0000060: 7072 6f64 5f30 3431 2030 3030 3030 3020  prod_041 000000 
+0000070: 454e 4420 4a4a 4a4a 4a4a 4a4a 4a4a 4a4a  END JJJJJJJJJJJJ
+
+00: short header length
+02: short 4 ???
+04: short 1 ???
+06: int unix timestamp
+12: int 0x12b8 = 4792 (number of 6 byte blocks)
+16: int 0x967e = 38526 (number of 8 byte blocks)
+1a: int 0x339c = 13212 (number of 6 byte blocks)
+1e: short 0x442 = 1090 (number of 4 byte blocks)
+20: short 0xdf4 = 3572 (number of 4 byte blocks)
+22: int 0xc83b = 51259 ??? (also in planlauf, planbz, planbtr, plangls, planspr, plansz, planu, planuk, planzug)
+26: int 0x1f67 = 8039 ???
+2a: int 0x2d932c28 = 764619816 ???
+
+0000080: 4792 * 6 byte blocks
+00070d0: 38526 * 8 byte blocks
+00524c0: 13212 * 6 byte blocks
+0065a68: 1090 * 4 byte blocks
+0066b70: 3572 * 4 byte blocks
+
+DB14/planatxd
+=============
+
+0000000: 7000 0400 0000 0e72 a54d 0200 4b0c 4c0c  p......r.M..K.L.
+0000010: eb90 0200 0000 0000 0000 282c 932d 4a46  ..........(,.-JF
+0000020: 3034 3120 7072 6f64 5f6d 6169 6e5f 6578  041 prod_main_ex
+0000030: 706f 7274 5f70 726f 645f 4a31 315f 3034  port_prod_J11_04
+0000040: 315f 3030 305f 706c 616e 5f63 6444 425f  1_000_plan_cdDB_
+0000050: 7072 6f64 5f30 3431 2030 3030 3030 3020  prod_041 000000 
+0000060: 454e 4420 4a4a 4a4a 4a4a 4a4a 4a4a 4a4a  END JJJJJJJJJJJJ
+
+00: short header length
+02: short 4 ???
+04: short 0 ???
+06: int unix timestamp
+0a:
+0c: short 0xc4b = 3147 (number of 12 byte blocks)
+0e: short 0xc4c = 3148 (number of 6 byte blocks)
+10: int 0x290eb = 168171 ???
+1a: int 0x2d932c28 = 764619816 ???
+
+0000070: 3148 * 6 byte blocks
+         short little endian counting up
+         short
+         short
+
+0004a38: 3147 * 12 byte blocks
+
+000ddbc: text area (connection info)
+
+DB14/planb
+==========
+
+0000000: b000 0400 0000 0e72 a54d 2020 2020 2020  .......r.M      
+0000010: 2020 2020 2020 2020 2002 0066 4b02 0067           ..fK..g
+0000020: 1f00 00dc 2700 0033 0000 004a 4630 3431  ....'..3...JF041
+0000030: 2020 2020 2020 2020 2020 2020 5631 2e31              V1.1
+0000040: 372f 3123 2042 344c 3441 325a 3234 4c49  7/1# B4L4A2Z24LI
+0000050: 4e4f 5333 2020 2020 2020 0700 282c 932d  NOS3      ..(,.-
+0000060: 4a46 3034 3120 7072 6f64 5f6d 6169 6e5f  JF041 prod_main_
+0000070: 6578 706f 7274 5f70 726f 645f 4a31 315f  export_prod_J11_
+0000080: 3034 315f 3030 305f 706c 616e 5f63 6444  041_000_plan_cdD
+0000090: 425f 7072 6f64 5f30 3431 2030 3030 3030  B_prod_041 00000
+00000a0: 3020 454e 4420 4a4a 4a4a 4a4a 4a4a 4a4a  0 END JJJJJJJJJJ
+
+00: short header length
+02: short 4 ???
+04: short 0 ???
+06: int unix timestamp
+...
+1b: int 0x24b66 = 150374 ???
+1f: int 0x1f67 = 8039 (number of 14 byte blocks)
+23: int 0x27dc = 10204 (half the number of 8 byte blocks)
+27: int 0x33 = 51  ???
+31: text       \0 terminated
+5b: int 0x2d932c28 = 764619816 ???
+60: text       not terminated
+
+00000b0: 8039 * 14 byte blocks (same amount as in planbz)
+         char  RANDOM
+         char  00
+         short 0800 1000 0c00 0100
+         short 0000 0300 0700
+         int   little endian counting up (city IDs)
+         short RANDOM
+         short 0000
+
+001b852: 20408 * 8 byte blocks
+         int   RANDOM
+         int   little endian counting up
+
+
+002f732: text area \0 delimetered (station names)
+
+DB14/planbetr
+=============
+
+0000000: 7000 0400 0000 0e72 a54d 3bc8 0000 0411  p......r.M;.....
+0000010: 0000 7c00 6b0e 0000 d800 0600 e805 0000  ..|.k...........
+0000020: 282c 932d 4a46 3034 3120 7072 6f64 5f6d  (,.-JF041 prod_m
+0000030: 6169 6e5f 6578 706f 7274 5f70 726f 645f  ain_export_prod_
+0000040: 4a31 315f 3034 315f 3030 305f 706c 616e  J11_041_000_plan
+0000050: 5f63 6444 425f 7072 6f64 5f30 3431 2030  _cdDB_prod_041 0
+0000060: 3030 3030 3020 454e 4420 4a4a 4a4a 4a4a  00000 END JJJJJJ
+
+00: short header length
+02: short 4 ???
+04: short 0 ???
+06: int unix timestamp
+0a: int 0xc83b = 51259 ??? (also in planlauf, planatr, planbz, plangls, planspr, plansz, planu, planuk, planzug)
+0e: int 0x1104 = 4356 (number of 10 byte blocks)
+12: short 0x7c = 124 ???
+14: int 0xe6b = 3691 ???
+...
+10: int 0x2d932c28 = 764619816 ???
+
+0000070: text area \0 delimetered (train names)
+
+00014c2: big areas of unidentifiable stuff
+
+001a6e9: 4356 * 10 byte blocks
+         int counting up
+         char RANDOM
+         char 0
+         int  RANDOM every second the same
+
+DB14/planbz
+===========
+
+0000000: 8000 0400 0000 0e72 a54d fe65 0a00 530f  .......r.M.e..S.
+0000010: b409 b409 671f 0000 3bc8 0000 282c 932d  ....g...;...(,.-
+0000020: 4a46 3034 3120 7072 6f64 5f6d 6169 6e5f  JF041 prod_main_
+0000030: 6578 706f 7274 5f70 726f 645f 4a31 315f  export_prod_J11_
+0000040: 3034 315f 3030 305f 706c 616e 5f63 6444  041_000_plan_cdD
+0000050: 425f 7072 6f64 5f30 3431 2030 3030 3030  B_prod_041 00000
+0000060: 3020 454e 4420 0056 312e 3137 2f31 2320  0 END .V1.17/1# 
+0000070: 4234 4c34 4132 5a32 344c 494e 4f53 3300  B4L4A2Z24LINOS3.
+
+00: short header length
+02: short 4 ???
+04: short 0 ???
+06: int unix timestamp
+0a: int 0xa65fe = 681470 ???
+10: double byte tuple as in planatxd
+14: int 0x1f67 = 8039 ???
+18: int 0xc83b = 51259 ??? (also in planlauf, planatr, planbtr, plangls, planspr, plansz, planu, planuk, planzug)
+
+
+14: 0x1f67 = 8039 (number of 6 byte blocks)
+
+0000080: 8039 * 6 byte blocks (same amount as in planb, plancon, plangat, plankant)
+         short RANDOM
+         int offset in RANDOMNESS
+
+000bc6a: RANDOMNESS
+
+DB14/plancon
+============
+
+0000000: 8000 0400 0100 0e72 a54d 671f 0000 fa06  .......r.Mg.....
+0000010: 0000 b100 0000 0000 7402 0000 dc04 0000  ........t.......
+0000020: 0000 0100 0a00 0800 282c 932d 4a46 3034  ........(,.-JF04
+0000030: 3120 7072 6f64 5f6d 6169 6e5f 6578 706f  1 prod_main_expo
+0000040: 7274 5f70 726f 645f 4a31 315f 3034 315f  rt_prod_J11_041_
+0000050: 3030 305f 706c 616e 5f63 6444 425f 7072  000_plan_cdDB_pr
+0000060: 6f64 5f30 3431 2030 3030 3030 3020 454e  od_041 000000 EN
+0000070: 4420 4a4a 4a4a 4a4a 4a4a 4a4a 4a4a 4a4a  D JJJJJJJJJJJJJJ
+
+00: short header length
+02: short 4 ???
+04: short 1 ???
+06: int unix timestamp
+0a: int 0x1f67 = 8039 ??? (same amount as in planb planbz, plangat, plankant)
+0e: int 0x6fa = 1786 (number of 10 byte blocks)
+12: int 0xb1 = 177 (number of 6 byte blocks)
+18: int 0x274 = 628 ???
+1c: int 0x4dc = 1244 ???
+
+0000080: 1786 * 10 byte blocks
+0004644: multiple of 4 byte blocks ???
+000c3d8: 4 byte blocks ???
+000eaf8: 177 * 6 byte blocks
+
+DB14/plangat
+============
+
+0000000: 7000 0400 0000 0e72 a54d 7f00 671f 0000  p......r.M..g...
+0000010: 0900 d200 0000 d10e 0000 0000 0000 0e08  ................
+0000020: 047f 0028 2c93 2d4a 4630 3431 2070 726f  ...(,.-JF041 pro
+0000030: 645f 6d61 696e 5f65 7870 6f72 745f 7072  d_main_export_pr
+0000040: 6f64 5f4a 3131 5f30 3431 5f30 3030 5f70  od_J11_041_000_p
+0000050: 6c61 6e5f 6364 4442 5f70 726f 645f 3034  lan_cdDB_prod_04
+0000060: 3120 3030 3030 3030 2045 4e44 204a 4a4a  1 000000 END JJJ
+
+00: short header length
+02: short 4 ???
+04: short 0 ???
+06: int unix timestamp
+0a: short 0x7f = 127 (number of 34 byte blocks)
+0c: int 0x1f67 = 8039 ??? (same amount as in planb, planbz, plancon, plankant)
+
+0000070: 127 * 34 byte blocks (train data)
+000114e: ??? blocks
+00026e4: text data (train info)
+
+DB14/plangls
+============
+
+0000000: 7000 0400 0100 0e72 a54d 0200 c90e 0100  p......r.M......
+0000010: 5425 4d00 6c6d 0000 cc01 3bc8 0000 671f  T%M.lm....;...g.
+0000020: 0000 282c 932d 4a46 3034 3120 7072 6f64  ..(,.-JF041 prod
+0000030: 5f6d 6169 6e5f 6578 706f 7274 5f70 726f  _main_export_pro
+0000040: 645f 4a31 315f 3034 315f 3030 305f 706c  d_J11_041_000_pl
+0000050: 616e 5f63 6444 425f 7072 6f64 5f30 3431  an_cdDB_prod_041
+0000060: 2030 3030 3030 3020 454e 4420 4a4a 4a4a   000000 END JJJJ
+
+00: short header length
+02: short 4 ???
+04: short 1 ???
+06: int unix timestamp
+0a: short 0200 ???
+0c: int 0x10ec9 = 69321 (number of 10 byte blocks)
+10: int 0x4d2554 = 5055828 ???
+14: int 0x6d6c = 28012 (number of 6 byte blocks)
+18: short 0x1cc = 460 (number of track names)
+1a: int 0xc83b = 51259 ??? (also in planlauf, planatr, planbtr, planbz, planspr, plansz, planu, planuk, planzug)
+1e: int 0x1f67 = 8039 ???
+22: int 0x2d932c28 = 764619816 ???
+
+0000070: 69321 * 10 byte blocks
+         int counting up to 0xc7ff incrementing not leaving out a value but some twice
+         short
+         int counting up - offsets of blocks in next segment
+00a944a: first int gives number of 6 byte tuples to follow.
+         there exist as many of those as 10 byte blocks (69321)
+         int 0119, 0219, ... 1819
+         short
+057b99e: 28012 * 6 byte blocks
+         short track name id
+         short RANDOM
+         short 0000
+05a4a26: 460 track names, 8 chars each, rest spaces
+
+DB14/plangrz
+============
+
+0000000: 6000 0400 0000 0e72 a54d 0200 3900 282c  `......r.M..9.(,
+0000010: 932d 4a46 3034 3120 7072 6f64 5f6d 6169  .-JF041 prod_mai
+0000020: 6e5f 6578 706f 7274 5f70 726f 645f 4a31  n_export_prod_J1
+0000030: 315f 3034 315f 3030 305f 706c 616e 5f63  1_041_000_plan_c
+0000040: 6444 425f 7072 6f64 5f30 3431 2030 3030  dDB_prod_041 000
+0000050: 3030 3020 454e 4420 4a4a 4a4a 4a4a 4a4a  000 END JJJJJJJJ
+
+00: short header length
+02: short 4 ???
+04: short 0 ???
+06: int unix timestamp
+0a: short 0200 ???
+0c: short 0x39 = 57 (number of 4 byte blocks)
+0e: int 0x2d932c28 = 764619816 ???
+
+0000060: 57 * 4 byte blocks
+         int  string offset from text start
+
+0000144: text data - station names including IDs
+
+DB14/plankant
+=============
+
+0000000: 6000 0400 0000 0e72 a54d a671 0000 4400  `......r.M.q..D.
+0000010: 0000 671f 0000 282c 932d 4a46 3034 3120  ..g...(,.-JF041 
+0000020: 7072 6f64 5f6d 6169 6e5f 6578 706f 7274  prod_main_export
+0000030: 5f70 726f 645f 4a31 315f 3034 315f 3030  _prod_J11_041_00
+0000040: 305f 706c 616e 5f63 6444 425f 7072 6f64  0_plan_cdDB_prod
+0000050: 5f30 3431 2030 3030 3030 3020 454e 4420  _041 000000 END 
+
+00: short header length
+02: short 4 ???
+04: short 0 ???
+06: int unix timestamp
+0a: int 0x71a6 = 29094 (number of 10 byte blocks)
+0e: int 0x44 = 68 ???
+12: int 0x1f67 = 8039 (number of 4 byte blocks - same as in planb, planbz, plancon, plangat)
+16: int 0x2d932c28 = 764619816 ???
+
+0000060: 8039 * 4 byte blocks (looks like 8040 but 8039 fits better with the header)
+0007dfc: int that looks as if it belongs to the last
+0007e00: 29094 * 10 byte blocks
+         int
+         int
+         short
+
+DB14/plankgeo
+=============
+
+0000000: 6000 0400 0000 0e72 a54d 671f 0000 0000  `......r.Mg.....
+0000010: 0000 0000 282c 932d 4a46 3034 3120 7072  ....(,.-JF041 pr
+0000020: 6f64 5f6d 6169 6e5f 6578 706f 7274 5f70  od_main_export_p
+0000030: 726f 645f 4a31 315f 3034 315f 3030 305f  rod_J11_041_000_
+0000040: 706c 616e 5f63 6444 425f 7072 6f64 5f30  plan_cdDB_prod_0
+0000050: 3431 2030 3030 3030 3020 454e 4420 4a4a  41 000000 END JJ
+
+00: short header length
+02: short 4 ???
+04: short 0 ???
+06: int unix timestamp
+0a: int 0x1f67 = 8039 (number of 8 byte blocks)
+14: int 0x2d932c28 = 764619816 ???
+
+0000060: 8039 * 8 byte blocks
+         4 shorts with value close together
+
+DB14/plankm
+===========
+
+0000000: 7000 0400 0000 0e72 a54d 671f 0000 0100  p......r.Mg.....
+0000010: 0000 0000 4042 0f00 0000 0000 0000 0000  ....@B..........
+0000020: 282c 932d 4a46 3034 3120 7072 6f64 5f6d  (,.-JF041 prod_m
+0000030: 6169 6e5f 6578 706f 7274 5f70 726f 645f  ain_export_prod_
+0000040: 4a31 315f 3034 315f 3030 305f 706c 616e  J11_041_000_plan
+0000050: 5f63 6444 425f 7072 6f64 5f30 3431 2030  _cdDB_prod_041 0
+0000060: 3030 3030 3020 454e 4420 4a4a 4a4a 4a4a  00000 END JJJJJJ
+
+00: short header length
+02: short 4 ???
+04: short 0 ???
+06: int unix timestamp
+0a: int 0x1f67 = 8039 (number of 4 byte blocks)
+20: int 0x2d932c28 = 764619816 ???
+
+000070: 8039 * 4 byte blocks
+
+DB14/planlauf
+=============
+
+0000000: 6000 0400 0000 0e72 a54d 8939 0000 671f  `......r.M.9..g.
+0000010: 0000 3bc8 0000 282c 932d 4a46 3034 3120  ..;...(,.-JF041 
+0000020: 7072 6f64 5f6d 6169 6e5f 6578 706f 7274  prod_main_export
+0000030: 5f70 726f 645f 4a31 315f 3034 315f 3030  _prod_J11_041_00
+0000040: 305f 706c 616e 5f63 6444 425f 7072 6f64  0_plan_cdDB_prod
+0000050: 5f30 3431 2030 3030 3030 3020 454e 4420  _041 000000 END 
+
+00: short header length
+02: short 4 ???
+04: short 0 ???
+06: int unix timestamp
+0a: int 0x3989 = 14729 (number of 4 byte blocks)
+0e: int 0x1f67 = 8039 ???
+12: int 0xc83b = 51259 ??? (also in plangls, planatr, planbtr, planbz, planspr, plansz, planu, planuk, planzug)
+16: int 0x2d932c28 = 764619816 ???
+
+0000060: 14729 * 4 byte blocks
+         int counting up - offsets of next 4 bytes blocks from beginning of file
+000e684: 210663 * 4 byte blocks
+
+DB14/planline
+=============
+
+0000000: 6000 6c00 671f 0000 0400 0000 0e72 a54d  `.l.g........r.M
+0000010: 0200 282c 932d 4a46 3034 3120 7072 6f64  ..(,.-JF041 prod
+0000020: 5f6d 6169 6e5f 6578 706f 7274 5f70 726f  _main_export_pro
+0000030: 645f 4a31 315f 3034 315f 3030 305f 706c  d_J11_041_000_pl
+0000040: 616e 5f63 6444 425f 7072 6f64 5f30 3431  an_cdDB_prod_041
+0000050: 2030 3030 3030 3020 454e 4420 4a4a 4a4a   000000 END JJJJ
+
+00: short header length
+02: short 0x6c = 108 (number of 9 byte blocks)
+04: int 0x1f67 = 8039 ???
+0c: int unix timestamp
+10: short 0x2 ???
+12: int 0x2d932c28 = 764619816 ???
+
+0000060: 108 * 9 byte blocks
+
+DB14/planmeta
+=============
+
+0000000: 7000 0400 0500 0e72 a54d 671f 0000 4e04  p......r.Mg...N.
+0000010: 0000 c500 0000 0000 0000 0000 0000 0100  ................
+0000020: 282c 932d 4a46 3034 3120 7072 6f64 5f6d  (,.-JF041 prod_m
+0000030: 6169 6e5f 6578 706f 7274 5f70 726f 645f  ain_export_prod_
+0000040: 4a31 315f 3034 315f 3030 305f 706c 616e  J11_041_000_plan
+0000050: 5f63 6444 425f 7072 6f64 5f30 3431 2030  _cdDB_prod_041 0
+0000060: 3030 3030 3020 454e 4420 4a4a 4a4a 4a4a  00000 END JJJJJJ
+
+00: short header length
+02: short 4 ???
+04: short 5 ???
+06: int unix timestamp
+0a: int 0x1f67 = 8039 (number of 4 byte blocks)
+0e: int 0x44e = 1102 (number of 4 byte blocks)
+12: int 0xc5 = 197 (number of 16 byte blocks)
+20: int 0x2d932c28 = 764619816 ???
+
+0000070: 197 * 16 byte blocks
+0000cc0: 8093 * 4 byte blocks
+0008a5c: 1102 * 4 byte blocks
+
+DB14/planmw
+===========
+
+0000000: 0400 0000
+
+4 byte header? random after?
+
+DB14/planng
+===========
+
+0000000: 7002 0000 f0af 0000 0400 0000 0e72 a54d  p............r.M
+0000010: 0200 0300 178e 0100 b015 0000 0600 0000  ................
+0000020: 671f 0000 dc27 0000 282c 932d 0000 0000  g....'..(,.-....
+0000030: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+*
+00000e0: 0000 0000 0000 0000 0000 0000 4141 4141  ............AAAA
+00000f0: 0041 4143 4545 4545 4949 4949 444e 4f4f  .AACEEEEIIIIDNOO
+0000100: 4f4f 0000 4f55 5555 0059 0000 6161 6161  OO..OUUU.Y..aaaa
+0000110: 0061 6163 6565 6565 6969 6969 646e 6f6f  .aaceeeeiiiidnoo
+0000120: 6f6f 0000 6f75 7575 0079 0000 0001 0203  oo..ouuu.y......
+0000130: 0405 0607 0809 0a0b 0c0d 0e0f 1011 1213  ................
+0000140: 1415 1617 1819 1a1b 1c1d 1e1f 2021 2223  ............ !"#
+0000150: 2425 2627 2829 2a2b 2c2d 2e2f 3031 3233  $%&'()*+,-./0123
+0000160: 3435 3637 3839 3a3b 3c3d 3e3f 4061 6263  456789:;<=>?@abc
+0000170: 6465 6667 6869 6a6b 6c6d 6e6f 7071 7273  defghijklmnopqrs
+0000180: 7475 7677 7879 7a5b 5c5d 5e5f 6061 6263  tuvwxyz[\]^_`abc
+0000190: 6465 6667 6869 6a6b 6c6d 6e6f 7071 7273  defghijklmnopqrs
+00001a0: 7475 7677 7879 7a7b 7c7d 7e7f 8081 8283  tuvwxyz{|}~.....
+00001b0: 8485 8687 8889 9a8b 9c8d 8e8f 9091 9293  ................
+00001c0: 9495 9697 9899 9a9b 9c9d 9eff a0a1 a2a3  ................
+00001d0: a4a5 a6a7 a8a9 aaab acad aeaf b0b1 b2b3  ................
+00001e0: b4b5 b6b7 b8b9 babb bcbd bebf e0e1 e2e3  ................
+00001f0: e4e5 e6e7 e8e9 eaeb eced eeef f0f1 f2f3  ................
+0000200: f4f5 f6d7 f8f9 fafb fcfd fedf e0e1 e2e3  ................
+0000210: e4e5 e6e7 e8e9 eaeb eced eeef f0f1 f2f3  ................
+0000220: f4f5 f6f7 f8f9 fafb fcfd feff c403 4165  ..............Ae
+0000230: 00c5 0341 6100 c603 4165 00d6 034f 6500  ...Aa...Ae...Oe.
+0000240: d803 4f65 00dc 0355 6500 df03 7373 00e4  ..Oe...Ue...ss..
+0000250: 0361 6500 e503 6161 00e6 0361 6500 f603  .ae...aa...ae...
+0000260: 6f65 00f8 036f 6500 fc03 7565 0000 2020  oe...oe...ue..  
+
+624 byte header??
+
+DB14/planrich
+=============
+
+0000000: 6000 0400 0300 0e72 a54d 0200 8500 282c  `......r.M....(,
+0000010: 932d 4a46 3034 3120 7072 6f64 5f6d 6169  .-JF041 prod_mai
+0000020: 6e5f 6578 706f 7274 5f70 726f 645f 4a31  n_export_prod_J1
+0000030: 315f 3034 315f 3030 305f 706c 616e 5f63  1_041_000_plan_c
+0000040: 6444 425f 7072 6f64 5f30 3431 2030 3030  dDB_prod_041 000
+0000050: 3030 3020 454e 4420 4a4a 4a4a 4a4a 4a4a  000 END JJJJJJJJ
+
+00: short header length
+02: short 4 ???
+04: short 3 ???
+06: int unix timestamp
+0c: short 0x85 = 133 (number of 4 byte blocks)
+0e: int 0x2d932c28 = 764619816 ???
+
+0000060: 133 * 4 byte blocks (string offset from text start)
+0000274: text data (station names)
+
+DB14/plansort
+=============
+
+0c00 0400 0000 0e72 a54d 0200
+
+random?
+
+DB14/planspr
+============
+
+0000000: 5c00 0400 0000 0e72 a54d 123c 0000 3bc8  \......r.M.<..;.
+0000010: 0000 282c 932d 4a46 3034 3120 7072 6f64  ..(,.-JF041 prod
+0000020: 5f6d 6169 6e5f 6578 706f 7274 5f70 726f  _main_export_pro
+0000030: 645f 4a31 315f 3034 315f 3030 305f 706c  d_J11_041_000_pl
+0000040: 616e 5f63 6444 425f 7072 6f64 5f30 3431  an_cdDB_prod_041
+0000050: 2030 3030 3030 3020 454e 4420 d601 0000   000000 END ....
+0000060: 0000 9ec5 0000 0000 d601 0000 0000 9fc5  ................
+
+00: short header length
+02: short 4 ???
+04: short 0 ???
+06: int unix timestamp
+0a: int 0x3c12 = 15378 (number of 12 byte blocks)
+0e: int 0xc83b = 51259 ??? (also in plangls, planatr, planbtr, planbz, planlauf, plansz, planu, planuk, planzug)
+
+000005c: 15378 * 12 byte blocks
+
+DB14/plansz
+===========
+
+0000000: 5c00 0400 0000 0e72 a54d b302 0000 3bc8  \......r.M....;.
+0000010: 0000 282c 932d 4a46 3034 3120 7072 6f64  ..(,.-JF041 prod
+0000020: 5f6d 6169 6e5f 6578 706f 7274 5f70 726f  _main_export_pro
+0000030: 645f 4a31 315f 3034 315f 3030 305f 706c  d_J11_041_000_pl
+0000040: 616e 5f63 6444 425f 7072 6f64 5f30 3431  an_cdDB_prod_041
+0000050: 2030 3030 3030 3020 454e 4420 3b04 0000   000000 END ;...
+
+00: short header length
+02: short 4 ???
+04: short 0 ???
+06: int unix timestamp
+0a: int 0x2b3 = 691 (number of 12 byte blocks)
+0e: int 0xc83b = 51259 ??? (also in plangls, planatr, planbtr, planbz, planlauf, planspr, planu, planuk, planzug)
+12: int 0x2d932c28 = 764619816 ???
+
+000005c: 691 * 12 byte blocks
+
+DB14/planu
+==========
+
+0000000: 9000 0400 0100 0e72 a54d 0500 0500 e607  .......r.M......
+0000010: 0000 0000 0000 ead1 0100 0000 0000 0000  ................
+0000020: 0000 0000 0000 0000 0000 671f 0000 3bc8  ..........g...;.
+0000030: 0000 282c 932d 0000 0000 0000 2800 4a46  ..(,.-......(.JF
+0000040: 3034 3120 7072 6f64 5f6d 6169 6e5f 6578  041 prod_main_ex
+0000050: 706f 7274 5f70 726f 645f 4a31 315f 3034  port_prod_J11_04
+0000060: 315f 3030 305f 706c 616e 5f63 6444 425f  1_000_plan_cdDB_
+0000070: 7072 6f64 5f30 3431 2030 3030 3030 3020  prod_041 000000 
+0000080: 454e 4420 4a4a 4a4a 4a4a 4a4a 4a4a 4a4a  END JJJJJJJJJJJJ
+
+00: short header length
+02: short 4 ???
+04: short 1 ???
+06: int unix timestamp
+0e: int 0x7e6 = 2022 (number of 8 byte blocks)
+16: int 0x1d1ea = 119274 (number of 18 byte blocks -  1)
+2a: int 0x1f67 = 8039 ???
+2e: int 0xc83b = 51259 ??? (also in plangls, planatr, planbtr, planbz, planlauf, planspr, plansz, planuk, planzug)
+32: int 0x2d932c28 = 764619816 ???
+
+0000090: 2022 * 8 byte blocks
+0003fc0: 119275 * 18 byte blocks
+
+DB14/planuk
+===========
+
+0000000: 6e00 0400 0000 0e72 a54d 4000 8c04 0000  n......r.M@.....
+0000010: 0d00 0000 0d00 0000 671f 0000 3bc8 0000  ........g...;...
+0000020: 282c 932d 0000 0000 4a46 3034 3120 7072  (,.-....JF041 pr
+0000030: 6f64 5f6d 6169 6e5f 6578 706f 7274 5f70  od_main_export_p
+0000040: 726f 645f 4a31 315f 3034 315f 3030 305f  rod_J11_041_000_
+0000050: 706c 616e 5f63 6444 425f 7072 6f64 5f30  plan_cdDB_prod_0
+0000060: 3431 2030 3030 3030 3020 454e 4420 0000  41 000000 END ..
+
+00: short header length
+02: short 4 ???
+04: short 0 ???
+06: int unix timestamp
+18: int 0x1f67 = 8039 ???
+1c: int 0xc83b = 51259 ??? (also in plangls, planatr, planbtr, planbz, planlauf, planspr, plansz, planu, planzug)
+20: int 0x2d932c28 = 764619816 ???
+
+000006e: 12000 bytes
+
+DB14/planw
+==========
+
+0000000: 8000 0400 0100 0e72 a54d 2020 2020 2020  .......r.M      
+0000010: 2020 2020 2020 2020 2044 5400 0045 5400           DT..ET.
+0000020: 002e 0028 2c93 2d00 0000 004a 4630 3431  ...(,.-....JF041
+0000030: 2070 726f 645f 6d61 696e 5f65 7870 6f72   prod_main_expor
+0000040: 745f 7072 6f64 5f4a 3131 5f30 3431 5f30  t_prod_J11_041_0
+0000050: 3030 5f70 6c61 6e5f 6364 4442 5f70 726f  00_plan_cdDB_pro
+0000060: 645f 3034 3120 3030 3030 3030 2045 4e44  d_041 000000 END
+0000070: 204a 4a4a 4a4a 4a4a 4a4a 4a4a 4a4a 4a4a   JJJJJJJJJJJJJJJ
+
+00: short header length
+02: short 4 ???
+04: short 1 ???
+06: int unix timestamp
+0d: int 0x5445 = 21573 (number of 4 byte blocks)
+23: int 0x2d932c28 = 764619816 ???
+
+0000080: 21573 * 4 byte blocks
+0015194:
+
+DB14/planzug
+============
+
+0000000: 7000 0400 0000 0e72 a54d 3bc8 0000 8939  p......r.M;....9
+0000010: 0000 0000 0000 671f 0000 282c 932d 4a46  ......g...(,.-JF
+0000020: 3034 3120 7072 6f64 5f6d 6169 6e5f 6578  041 prod_main_ex
+0000030: 706f 7274 5f70 726f 645f 4a31 315f 3034  port_prod_J11_04
+0000040: 315f 3030 305f 706c 616e 5f63 6444 425f  1_000_plan_cdDB_
+0000050: 7072 6f64 5f30 3431 2030 3030 3030 3020  prod_041 000000 
+0000060: 454e 4420 4a4a 4a4a 4a4a 4a4a 4a4a 4a4a  END JJJJJJJJJJJJ
+
+00: short header length
+02: short 4 ???
+04: short 0 ???
+06: int unix timestamp
+0a: int 0xc83b = 51259 (number of 2 byte blocks) (also in plangls, planatr, planbtr, planbz, planlauf, planspr, plansz, planu, planuk)
+0e: int 0x3989 = 14729 ???
+16: int 0x1f67 = 8039 ???
+1a: int 0x2d932c28 = 764619816 ???
+
+0000070: 51259 * 2 byte
+00190e6:
+
+DB14/planzz
+===========
+
+0000000: 6000 0400 0000 0e72 a54d 2400 0000 5a00  `......r.M$...Z.
+0000010: 0000 0061 f800 8060 0001 4a46 3034 3120  ...a...`..JF041 
+0000020: 7072 6f64 5f6d 6169 6e5f 6578 706f 7274  prod_main_export
+0000030: 5f70 726f 645f 4a31 315f 3034 315f 3030  _prod_J11_041_00
+0000040: 305f 706c 616e 5f63 6444 425f 7072 6f64  0_plan_cdDB_prod
+0000050: 5f30 3431 2030 3030 3030 3020 454e 4420  _041 000000 END 
+
+00: short header length
+02: short 4 ???
+04: short 0 ???
+06: int unix timestamp
+
+0000060:
